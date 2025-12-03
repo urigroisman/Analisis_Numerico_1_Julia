@@ -6,6 +6,7 @@
 # (4) Horner's method in a nested scheme.
 
 using BenchmarkTools
+using Polynomials
 
 polyval(c, x) = sum([c[i]*x^(i-1) for i=1:length(c)])
 
@@ -56,18 +57,27 @@ function build_polynomial(deg::Int)
     rand(deg + 1)   # coeficientes aleatorios
 end
 
+# Evaluación usando el paquete Polynomials.jl
+function polyeval_polynomials(cff::AbstractVector, x::Float64)
+    p = Polynomial(cff)  # p(x) = cff[1] + cff[2]x + cff[3]x^2 + ...
+    return p(x)
+end
+
+
 # --- 3. Evaluar el polinomio con todos los métodos ---
 function eval_all(cff, x)
     val_polyval  = polyval(cff, x)
     val_polyfun  = polyfun(cff, x)
     val_evaluate = evaluate(cff, x)
     val_horner   = Horner(cff, x)
+    val_polyeval_polynomials = polyeval_polynomials(cff, x)
 
     return (
         polyval  = val_polyval,
         polyfun  = val_polyfun,
         evaluate = val_evaluate,
         horner   = val_horner,
+        polyeval_polynomials = val_polyeval_polynomials,
     )
 end
 
@@ -86,6 +96,9 @@ function bench_all(cff, x)
 
     println("Horner:")
     @btime Horner($cff, $x)
+
+    println("polyeval_polynomials:")
+    @btime polyeval_polynomials($cff, $x)
 end
 
 # --- 5. Función principal sólo con I/O + llamadas limpias ---
@@ -109,6 +122,7 @@ function main()
     println("polyfun(cff, x)  = $(vals.polyfun)")
     println("evaluate(cff, x) = $(vals.evaluate)")
     println("Horner(cff, x)   = $(vals.horner)")
+    println("polyeval_polynomials(cff, x) = $(vals.polyeval_polynomials)")
 
     # Benchmarks (separado)
     bench_all(cff, x)
