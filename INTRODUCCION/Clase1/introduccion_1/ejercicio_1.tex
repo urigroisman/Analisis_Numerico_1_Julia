@@ -1,0 +1,240 @@
+\documentclass[11pt,a4paper]{article}
+
+% ------------------------------------------------
+% Idioma, codificación y fuentes
+% ------------------------------------------------
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}   % Entrada en UTF-8
+\usepackage[T1]{fontenc}      % Acentos correctos en PDF
+\usepackage{lmodern}          % Fuente Latin Modern
+\usepackage{csquotes}         % Comillas tipográficas
+
+% ------------------------------------------------
+% Matemática
+% ------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+
+\numberwithin{equation}{section}  % Ecuaciones numeradas por sección
+
+% Entornos tipo teorema
+\theoremstyle{definition}
+\newtheorem{ejercicio}{Ejercicio}
+\newtheorem{definición}[ejercicio]{Definición}
+\newtheorem{proposición}[ejercicio]{Proposición}
+\newtheorem{ejemplo}[ejercicio]{Ejemplo}
+
+% ------------------------------------------------
+% Página y formato general
+% ------------------------------------------------
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\usepackage{setspace}
+\onehalfspacing          % Interlineado 1.5
+
+\usepackage{parskip}     % Espacio entre párrafos en lugar de sangría
+\setlength{\parindent}{0pt}
+
+% ------------------------------------------------
+% Colores, gráficos y figuras
+% ------------------------------------------------
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+% Paleta básica
+\definecolor{linkcolor}{RGB}{0,0,120}
+\definecolor{urlcolor}{RGB}{0,90,0}
+\definecolor{codegray}{RGB}{40,40,40}
+\definecolor{codebg}{RGB}{245,245,245}
+
+% ------------------------------------------------
+% Listas
+% ------------------------------------------------
+\usepackage{enumitem}
+\setlist[itemize]{label=--,leftmargin=2em}
+\setlist[enumerate]{leftmargin=2em}
+
+% ------------------------------------------------
+% Código fuente (Julia, etc.)
+% ------------------------------------------------
+\usepackage{listings}
+
+\lstdefinelanguage{Julia}{
+  morekeywords={
+    abstract,break,case,catch,const,continue,do,else,elseif,end,exports,
+    false,finally,for,function,global,if,import,let,local,macro,module,
+    quote,return,true,try,using,while,mutable,struct
+  },
+  sensitive=true,
+  morecomment=[l]\#,
+  morestring=[b]"
+}
+
+\lstset{
+  language=Julia,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries\color{blue!60!black},
+  commentstyle=\itshape\color{gray},
+  stringstyle=\color{red!60!black},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{black!40},
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  tabsize=4,
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible
+}
+
+% Comando cómodo para insertar fragmentos cortos de código en línea
+\newcommand{\code}[1]{\texttt{#1}}
+
+% ------------------------------------------------
+% Hipervínculos
+% ------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkcolor,
+  citecolor=linkcolor,
+  urlcolor=urlcolor,
+  pdfauthor={},
+  pdftitle={Análisis de coste de \texttt{polyval}}
+}
+
+% ------------------------------------------------
+% Título, autor y fecha
+% ------------------------------------------------
+\title{Análisis Numérico 1}
+\title{Costo en multiplicaciones de la función \code{polyval}}
+\author{Uri Groisman}
+%\date{\today}
+
+% ------------------------------------------------
+% COMIENZO DEL DOCUMENTO
+% ------------------------------------------------
+\begin{document}
+
+\maketitle
+
+\begin{ejercicio}
+
+\label{ej:costo-polyval}
+  Supongamos que calcular $x^i$ cuesta $i-1$ multiplicaciones.
+  Deducir el número total de multiplicaciones necesarias para evaluar,
+  mediante el algoritmo \verb|polyval| definido arriba,
+  un polinomio de grado $d$.
+\end{ejercicio}
+
+
+\bigskip     % espacio grande
+\bigskip     % espacio grande
+%
+% ... solución
+%
+La función \code{polyval(c,x)} evalúa el polinomio en el punto $x$.
+\begin{lstlisting}[language=Julia]
+polyval(c, x) = sum([c[i]*x^(i-1) for i in 1:length(c)])
+\end{lstlisting}
+Supongamos que calcular $x^i$ cuesta $i-1$ multiplicaciones. Deducir
+el número total de multiplicaciones necesarias para evaluar, mediante
+este algoritmo, un polinomio de grado $d$.
+
+\[
+\texttt{length}(c)=d+1
+\]
+y que estamos evaluando
+\[
+p(x) = c_0 + c_1 x + c_2 x^2 + \dots + c_d x^d 
+      = \sum_{k=0}^d c_k x^k,
+\]
+donde \(c_k = c[k+1]\).
+
+El enunciado indica que calcular \(x^i\) cuesta \(i-1\) multiplicaciones. 
+Queremos determinar cuántas multiplicaciones realiza el algoritmo \texttt{polyval} para evaluar
+un polinomio de grado \(d\).
+
+\medskip
+
+\textbf{1. Costo de calcular las potencias de \(x\).}
+
+Para cada término \(c_k x^k\) (con \(k=0,1,\dots,d\)) es necesario disponer de la potencia \(x^k\).
+Consideramos el costo de calcular explícitamente cada potencia:
+
+\begin{itemize}
+  \item \(x^0 = 1\): no requiere multiplicaciones (\(0\)).
+  \item Para \(k \ge 1\), por hipótesis, calcular \(x^k\) cuesta \(k-1\) multiplicaciones.
+\end{itemize}
+
+Por lo tanto, el número total de multiplicaciones para obtener todas las potencias
+\(x^0,x^1,\dots,x^d\) es
+\[
+\sum_{k=1}^{d} (k-1).
+\]
+
+Renombrando el índice \(m = k-1\), cuando \(k\) recorre \(\{1,\dots,d\}\),
+\(m\) recorre \(\{0,\dots,d-1\}\). Entonces
+\[
+\sum_{k=1}^{d} (k-1) = \sum_{m=0}^{d-1} m.
+\]
+Como se trata de la suma de una progresión aritmética,
+\[
+\sum_{m=0}^{d-1} m = \frac{(d-1)d}{2}.
+\]
+
+Así, el costo total en multiplicaciones asociado al cálculo de todas las potencias \(x^k\) es
+\[
+M_{\text{potencias}}(d) = \frac{(d-1)d}{2}.
+\]
+
+\medskip
+
+\textbf{2. Costo de multiplicar por los coeficientes.}
+
+Cada término del polinomio es de la forma
+\[
+c_k x^k.
+\]
+Una vez calculada la potencia \(x^k\), obtener el producto \(c_k x^k\) requiere una multiplicación.
+
+Hay \(d+1\) coeficientes \(c_0, c_1, \dots, c_d\), por lo que se realizan
+\[
+M_{\text{coef}}(d) = d+1
+\]
+multiplicaciones para formar todos los productos \(c_k x^k\).
+
+\medskip
+
+\textbf{3. Número total de multiplicaciones.}
+
+Sumando ambas contribuciones, el número total de multiplicaciones que realiza el algoritmo
+\texttt{polyval} para evaluar un polinomio de grado \(d\) es
+\[
+N_{\text{mult}}(d)
+= M_{\text{potencias}}(d) + M_{\text{coef}}(d)
+= \frac{(d-1)d}{2} + (d+1).
+\]
+
+Desarrollamos y simplificamos:
+\[
+\frac{(d-1)d}{2} + (d+1)
+= \frac{d^2 - d}{2} + \frac{2d + 2}{2}
+= \frac{d^2 - d + 2d + 2}{2}
+= \frac{d^2 + d + 2}{2}.
+\]
+
+\medskip
+
+En conclusión, el número de multiplicaciones requerido por el algoritmo
+\texttt{polyval} para evaluar un polinomio de grado \(d\) es
+\[
+\boxed{N_{\text{mult}}(d) = \dfrac{d^2 + d + 2}{2}.}
+\]
+
+Obsérvese que este costo crece como \(\mathcal{O}(d^2)\), en contraste con el método de Horner,
+que evalúa el mismo polinomio usando únicamente \(d\) multiplicaciones y \(d\) sumas.
+
+\end{document}
