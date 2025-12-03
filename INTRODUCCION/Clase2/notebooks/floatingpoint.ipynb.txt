@@ -1,0 +1,275 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "278532e4",
+   "metadata": {},
+   "source": [
+    "This notebook corresponds to Lecture 2 of MCS 471."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "94cf6225",
+   "metadata": {},
+   "source": [
+    "# Floating-Point Numbers"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "44b18c7f",
+   "metadata": {},
+   "source": [
+    "Two functions display the main properties\n",
+    "of 32-bit and 64-bit floating point numbers."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "dd381fd7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "test_32bitfloat"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\"\n",
+    "    function test_32bitfloat()\n",
+    "\n",
+    "tests properties of 32-bit floating-point numbers.\n",
+    "\"\"\"\n",
+    "function test_32bitfloat()\n",
+    "    println(\"Testing 32-bit floats ...\");\n",
+    "    x = Float32(1.0)\n",
+    "    println(x, \" has type \", typeof(x))\n",
+    "    println(x, \" is \", bitstring(x))\n",
+    "    y = nextfloat(x)\n",
+    "    println(y, \" is next to \", x)\n",
+    "    eps32 = y - x\n",
+    "    println(\"32-bit machine precision : \", eps32)\n",
+    "    println(eps32, \" is \", bitstring(eps32))\n",
+    "    println(\"2^(-23) is \", Float32(2.0)^(-23))\n",
+    "    z = x + eps32\n",
+    "    println(z, \" is 1.0 + 32-bit machine precision\")\n",
+    "    a = nextfloat(Float32(0.0))\n",
+    "    println(\"smallest 32-bit float : \", a)\n",
+    "    println(a, \" is \", bitstring(a))\n",
+    "    b = prevfloat(Float32(Inf))\n",
+    "    println(\"largest 32-bit float : \", b)\n",
+    "    println(b, \" is \", bitstring(b))\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "d52a84d1",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Testing 32-bit floats ...\n",
+      "1.0 has type Float32\n",
+      "1.0 is 00111111100000000000000000000000\n",
+      "1.0000001 is next to 1.0\n",
+      "32-bit machine precision : 1.1920929e-7\n",
+      "1.1920929e-7 is 00110100000000000000000000000000\n",
+      "2^(-23) is 1.1920929e-7\n",
+      "1.0000001 is 1.0 + 32-bit machine precision\n",
+      "smallest 32-bit float : 1.0e-45\n",
+      "1.0e-45 is 00000000000000000000000000000001\n",
+      "largest 32-bit float : 3.4028235e38\n",
+      "3.4028235e38 is 01111111011111111111111111111111\n"
+     ]
+    }
+   ],
+   "source": [
+    "test_32bitfloat()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "e5af304e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "test_64bitfloat"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\"\"\"\n",
+    "    function test_64bitfloat()\n",
+    "\n",
+    "tests properties of 64-bit floating-point numbers.\n",
+    "\"\"\"\n",
+    "function test_64bitfloat()\n",
+    "    println(\"Testing 64-bit floats ...\");\n",
+    "    x = Float64(1.0)\n",
+    "    println(x, \" has type \", typeof(x))\n",
+    "    println(x, \" is \", bitstring(x))\n",
+    "    y = nextfloat(x)\n",
+    "    println(y, \" is next to \", x)\n",
+    "    eps64 = y - x\n",
+    "    println(\"64-bit machine precision : \", eps64)\n",
+    "    println(eps64, \"\\n is \", bitstring(eps64))\n",
+    "    println(\"2^(-52) is \", 2.0^(-52))\n",
+    "    z = x + eps64\n",
+    "    println(z, \" is 1.0 + 64-bit machine precision\")\n",
+    "    a = nextfloat(Float64(0.0))\n",
+    "    println(\"smallest 64-bit float : \", a)\n",
+    "    println(a, \"\\n is \", bitstring(a))\n",
+    "    b = prevfloat(Float64(Inf))\n",
+    "    println(\"largest 64-bit float : \", b)\n",
+    "    println(b, \"\\n is \", bitstring(b))\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "0fffe8f1",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Testing 64-bit floats ...\n",
+      "1.0 has type Float64\n",
+      "1.0 is 0011111111110000000000000000000000000000000000000000000000000000\n",
+      "1.0000000000000002 is next to 1.0\n",
+      "64-bit machine precision : 2.220446049250313e-16\n",
+      "2.220446049250313e-16\n",
+      " is 0011110010110000000000000000000000000000000000000000000000000000\n",
+      "2^(-52) is 2.220446049250313e-16\n",
+      "1.0000000000000002 is 1.0 + 64-bit machine precision\n",
+      "smallest 64-bit float : 5.0e-324\n",
+      "5.0e-324\n",
+      " is 0000000000000000000000000000000000000000000000000000000000000001\n",
+      "largest 64-bit float : 1.7976931348623157e308\n",
+      "1.7976931348623157e308\n",
+      " is 0111111111101111111111111111111111111111111111111111111111111111\n"
+     ]
+    }
+   ],
+   "source": [
+    "test_64bitfloat()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "744a0a4d",
+   "metadata": {},
+   "source": [
+    "# An Exercise Solved"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b2aa741d",
+   "metadata": {},
+   "source": [
+    "Consider a floating-point number system with base 10,\n",
+    "      three decimal places in the fraction,\n",
+    "      with exponents ranging between $-9$ and $+9$.\n",
+    "\n",
+    "\n",
+    "1. What is the machine precision of this number system?\n",
+    "\n",
+    "2. Let $x = 82050$ and $y = 636.57$.\n",
+    "\n",
+    "   1. Represent $x$ and $y$ in this number system.\n",
+    "   \n",
+    "   2. Show the arithmetic to compute $x-y$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bb14239b",
+   "metadata": {},
+   "source": [
+    "### answer to the exercise"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c6de754a",
+   "metadata": {},
+   "source": [
+    "1. Applying the formula $B^{-p}$, for base $B=10$ and size of fraction $p=3$ leads to $10^{-3}$ as the value for the machine precision.  \n",
+    "\n",
+    "2. The numbers $x$ and $y$ are first written in standard notation.\n",
+    "\n",
+    "   1. $x = .821 \\times 10^{5}$ and $y = .637 \\times 10^{3}$.\n",
+    "\n",
+    "   2. Denormalize $y = .00637 \\times 10^{5}$ and subtract $.00637$ from $.821$\n",
+    "   \n",
+    "      To continue the arithmetic, we use a code cell."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "4ef5b354",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.81463"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    ".821 - .00637"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fc101418",
+   "metadata": {},
+   "source": [
+    "We round the result: $.815 \\times 10^{5} = 81500$."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Julia 1.7.2",
+   "language": "julia",
+   "name": "julia-1.7"
+  },
+  "language_info": {
+   "file_extension": ".jl",
+   "mimetype": "application/julia",
+   "name": "julia",
+   "version": "1.7.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
